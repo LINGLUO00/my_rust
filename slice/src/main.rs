@@ -6,6 +6,8 @@ fn main() {
    // println!("{}",wordIndex);
    let mut v=vec![1,2,3];
    let first=2;
+   let second =v[1];
+   println!("{}",second);
    v[0] = 5;
    let first=&v[0];
    println!("{}",first);
