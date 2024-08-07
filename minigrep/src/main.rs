@@ -3,7 +3,7 @@ use std::process;
 use minigrep::Config;
 
 fn main() {
-    let args:Vec <String> =env::args().collect();
+    //let args:Vec <String> =env::args().collect();
 
     // println!("{:?}",args);
 
@@ -11,9 +11,9 @@ fn main() {
     // let filename=&args[2];
     // println!("Search for {}",query);
     // println!("in filename:{}",filename);
-    let config=Config::new(&args).unwrap_or_else(|err| {
+    let config=Config::new(env::args()).unwrap_or_else(|err| {
         eprintln!("problem parsing arguments:{}",err);
-        process::exit(0);
+        process::exit(1);
     });
 
     // let contents = fs::read_to_string(config.filename)
