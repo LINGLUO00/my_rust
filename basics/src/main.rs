@@ -1,26 +1,7 @@
-use std::fmt::Display;
-
-fn longest_with_an_announcement<'a>(
-    x: &'a str,
-    y: &'a str,
-    // ann: T,
-) -> &'a str
-// where
-//     T: Display,
-{
-    // println!("Announcement! {}", ann);
-    if x.len() > y.len() {
-        x
-    } else {
-        y
-    }
-}
 fn main() {
-    let string1 = String::from("abcd");
-    let string2 = "xyz";
-
-    let result = longest_with_an_announcement(string1.as_str(), string2);
-    println!("The longest string is {}", result);
+    println!("{argument}", argument = "test"); // => "test"
+    println!("{name} {}", 1, name = 2); // => "2 1"
+    println!("{a} {c} {b}", a = "a", b = 'b', c = 3); // => "a 3 b"
 }
 
 
