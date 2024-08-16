@@ -7,7 +7,7 @@ pub const RAMS_BLOCK_SIZE:u64=512;
 ///@brief 内存文件系统的Inode结构体，
 /// 使用SpinLock自旋锁防止阻塞
 #[derive(Debug)]
-struct LockedRamFSInode(SpinLock<RamFSInode>);
+struct LockedRamFSInode(Spinlock<RamFSInode>);
 
 #[derive(Debug,Clone)]
 // pub struct Magic(u64);
@@ -82,18 +82,20 @@ pub struct DName(String);
 ///iNode的元数据
 #[derive(Debug, Clone)]
 pub struct Metadata {
-    /// 文件的大小（以字节为单位）
+    dev_id: u64,
+    inode_id: u64,
     size: u64,
-    /// 文件的权限
-    permissions: Permissions,
-    /// 文件的创建时间
-    creation_time: SystemTime,
-    /// 文件的最后修改时间
-    modification_time: SystemTime,
-    /// 文件的最后访问时间
-    access_time: SystemTime,
-    /// 文件类型（如普通文件、目录、符号链接等）
+    blk_size: u64,
+    blocks: u64,
+    atime: u64,
+    mtime: u64,//modification time，文件内容被修改的时间
+    ctime: u64,//change time,文件元数据被修改，不包括内容
     file_type: FileType,
+    mode: ModeType::from_bits_truncate(0o777),
+    nlinks: 1,
+    uid: 0,
+    gid: 0,
+    raw_dev: DeviceNumber::default(),
 }
 
 ///@brief 文件权限
@@ -112,6 +114,7 @@ pub struct Permissions {
 ///@brief 文件类型
 #[derive(Debug, Clone)]
 pub enum FileType {
+    Dir,
     File,
     Directory,
     Symlink,
@@ -137,6 +140,13 @@ impl RamFS {
             RAMFS_BLOCK_SIZE,
             RAMFS_MAX_NAMELEN as u64,
         );
+        let root:Arc<LockedRamFSInode>=Arc::new(LockedRamFSInode(Spinlock::new(RamFSInode {
+             name: Default::default(), 
+             parent: Weak::default(), 
+             self_ref: Weak::default(), 
+             children: BTreeMap::new(), 
+             data: Vec::new(), 
+             metadata: (), fs: () })))
     }
 }
 
